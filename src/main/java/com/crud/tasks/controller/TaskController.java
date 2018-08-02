@@ -10,7 +10,7 @@ import java.util.List;
 
 import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
 
-@CrossOrigin(origins = "*") // Może otrzymywać żądania ze wszystki serwerów (nawet zewnętrznych)
+@CrossOrigin(origins = "*") // Może otrzymywać żądania ze wszystkich serwerów (nawet zewnętrznych)
 @RestController
 @RequestMapping("/v1/task")
 
