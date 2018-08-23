@@ -15,13 +15,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.hamcrest.Matchers.any;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.hamcrest.Matchers.hasSize;
@@ -29,8 +25,7 @@ import static org.hamcrest.Matchers.is;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.junit.Assert.*;
+import java.util.Optional;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(TaskController.class)
@@ -72,7 +67,7 @@ public class TaskControllerTest {
         TaskDto taskDto = new TaskDto(1L, "Title1", "Content1");
         Task task = new Task(1L, "Title1", "Content1");
 
-        when(service.getTask(anyLong())).thenReturn(task);
+        when(service.getTask(Matchers.any())).thenReturn(Optional.ofNullable(task));
         when(taskMapper.mapToTaskDto(Matchers.any())).thenReturn(taskDto);
 
         //When & Then
@@ -86,12 +81,31 @@ public class TaskControllerTest {
     @Test
     public void shouldDeleteTask() throws Exception {
         //Given
-
+        //When & Then
+        mockMvc.perform(delete("/v1/task/deleteTask").param("taskId", "1"))
+                .andExpect(status().isOk());
     }
 
     @Test
-    public void shouldUpdateTask() {
+    public void shouldUpdateTask() throws Exception {
+        //Given
+        TaskDto taskDto = new TaskDto(1L, "Title1", "Content1");
+        Task task = new Task(1L, "Title1", "Content1");
 
+        when(taskMapper.mapToTaskDto(any())).thenReturn(taskDto);
+        when(taskMapper.mapToTask(any())).thenReturn(task);
+
+        Gson gson = new Gson();
+        String jsonContent = gson.toJson(taskDto);
+
+        //When & Then
+        mockMvc.perform(put("/v1/task/updateTask")
+        .contentType(MediaType.APPLICATION_JSON)
+        .characterEncoding("UTF-8")
+        .content(jsonContent))
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.title", is("Title1")))
+                .andExpect(jsonPath("$.content", is("Content1")));
     }
 
     @Test
