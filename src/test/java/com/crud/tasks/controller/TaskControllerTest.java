@@ -128,8 +128,8 @@ public class TaskControllerTest {
         .contentType(MediaType.APPLICATION_JSON)
         .characterEncoding("UTF-8")
         .content(jsonContent))
-                .andExpect(jsonPath("$.id", is(1L)))
-                .andExpect(jsonPath("$.title", is("Title1")))
-                .andExpect(jsonPath("$.content", is("Content1")));
+                .andExpect(status().isOk());
+
+        verify(service).saveTask(task);
     }
 }
