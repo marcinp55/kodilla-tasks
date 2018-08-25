@@ -16,6 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -86,7 +87,7 @@ public class TaskControllerTest {
         mockMvc.perform(delete("/v1/task/deleteTask").param("taskId", "1"))
                 .andExpect(status().isOk());
 
-        verify(service).deleteTask(1L);
+        verify(service, times(1)).deleteTask(1L);
     }
 
     @Test
@@ -130,6 +131,6 @@ public class TaskControllerTest {
         .content(jsonContent))
                 .andExpect(status().isOk());
 
-        verify(service).saveTask(task);
+        verify(service, times(1)).saveTask(task);
     }
 }
